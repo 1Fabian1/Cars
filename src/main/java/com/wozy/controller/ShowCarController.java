@@ -12,7 +12,7 @@ public class ShowCarController {
 
     @RequestMapping(value = {"/test"}, method = RequestMethod.GET)
     public String testCars(Model model){
-        String something = "AAAAAAA";
+        String something = "AAAAAAAA";
         model.addAttribute("something", something);
         return "test";
     }
