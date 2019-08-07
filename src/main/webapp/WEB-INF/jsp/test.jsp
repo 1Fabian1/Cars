@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: Fabia
@@ -12,7 +13,7 @@
 </head>
 <body>
 <h1>Hello on test</h1>
-
+    <c:out value="${something}"/>
 
 </body>
 </html>
