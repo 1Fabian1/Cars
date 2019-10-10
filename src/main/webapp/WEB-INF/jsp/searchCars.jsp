@@ -9,11 +9,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Show Cars</title>
+    <title>Pokaż auta</title>
 </head>
 <body>
-<h1>Hello on test</h1>
-    <c:out value="${something}"/>
-
+<h1>Twoje autka</h1>
+    <c:out value="${response}"/>
 </body>
 </html>

@@ -3,25 +3,45 @@ package com.wozy.model;
 import java.util.Date;
 import java.util.Objects;
 
+
 public class Car {
     private String brand;
+
     private String model;
+
     private int engine;
+
     private int year;
+
     private int hp;
+
     private int milleage;
+
     private String color;
+
     private int damaged;
+
     private int automated;
+
     private int fuel;
+
     private String countryFrom;
+
     private int price;
+
     private String url;
+
     private String image;
+
     private String region;
+
     private String city;
+
     private String description;
+
     private Date createdAt;
+
+    public Car(){};
 
     public Car(String brand, String model, int year){
         this.brand = brand;

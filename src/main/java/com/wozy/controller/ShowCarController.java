@@ -1,57 +1,69 @@
 package com.wozy.controller;
 
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import com.wozy.model.Car;
+import com.wozy.model.QueryBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.nio.charset.Charset;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @Controller
 public class ShowCarController {
 
-    @RequestMapping(value = {"/test"}, method = RequestMethod.GET)
-    public String testCars(Model model){
+    @RequestMapping(value = {"/searchCars"}, method = RequestMethod.POST)
+    public String testCars(Model model, @RequestParam("brand") String brand, @RequestParam("model") String modell) throws IOException {
 
-        RestTemplate restTemplate = new RestTemplate();
+        String address = "http://34.90.90.63/elasticsearch/auta/_search?q=";
+        Car car = new Car();
+        car.setBrand(brand);
+        car.setModel(modell);
+        QueryBuilder qb = new QueryBuilder();
+        String addressWithQuery = qb.produceString(address,car);
 
-        String requestJson = "{\n" +
-                "  \"size\": 10,\n" +
-                "  \"from\": 0, \n" +
-                "  \"query\": {\n" +
-                "    \"match\": {\n" +
-                "      \"brand\": \"BMW\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
-
-
-        restTemplate.exchange
-                ("http://34.90.90.63/elasticsearch/auta/_search", HttpMethod.POST,
-                new HttpEntity<String>(createHeaders("user", "XNgRWXBXWNH1")), String.class);
+        System.out.println(addressWithQuery);
 
 
 
+        URL url = new URL(addressWithQuery);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setRequestMethod("POST");
+
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Authorization", "Basic dXNlcjpYTmdSV1hCWFdOSDE=");
+
+        connection.setConnectTimeout(500);
+        connection.setReadTimeout(500);
+
+        connection.setInstanceFollowRedirects(false);
 
 
-        String something = "Works :D";
-        model.addAttribute("something", something);
-        return "test";
-    }
+        int status = connection.getResponseCode();
+        System.out.println("status:" + status);
 
-    HttpHeaders createHeaders(String username, String password){
-        return new HttpHeaders() {{
-            String auth = username + ":" + password;
-            byte[] encodedAuth = Base64.encodeBase64(
-                    auth.getBytes(Charset.forName("US-ASCII")) );
-            String authHeader = "Basic " + new String( encodedAuth );
-            set( "Authorization", authHeader );
-        }};
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuffer content = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+
+        connection.disconnect();
+        model.addAttribute("response", content);
+
+
+        return "searchCars";
     }
 
 }
+
+
